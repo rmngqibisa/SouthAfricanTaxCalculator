@@ -11,24 +11,23 @@ function calculateTax(income) {
     { threshold: Infinity, rate: 45 }
   ];
 
-  // Taxable income
-  let taxableIncome = income;
-
-  // Taxable amount and total tax
-  let taxableAmount = 0;
   let totalTax = 0;
+  let previousThreshold = 0;
 
   // Calculate taxable amount and total tax
   for (let i = 0; i < taxRates.length; i++) {
-    if (taxableIncome > taxRates[i].threshold) {
-      taxableAmount = taxRates[i].threshold;
-      totalTax += (taxableIncome - taxableAmount) * taxRates[i].rate / 100;
+    const currentThreshold = taxRates[i].threshold;
+    const rate = taxRates[i].rate;
+
+    if (income > currentThreshold) {
+      const taxableAmount = currentThreshold - previousThreshold;
+      totalTax += taxableAmount * rate / 100;
+      previousThreshold = currentThreshold;
     } else {
-      taxableAmount = taxableIncome;
-      totalTax += taxableIncome * taxRates[i].rate / 100;
+      const taxableAmount = income - previousThreshold;
+      totalTax += taxableAmount * rate / 100;
       break;
     }
-    taxableIncome -= taxableAmount;
   }
 
   // Return total tax
